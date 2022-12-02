@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+FF_VERSION_DIR="$(cd -- "$(dirname "${BASH_SOURCE}")" ; cd .. > /dev/null 2>&1 && pwd -P)"
+"$FF_VERSION_DIR/Firefox.app/Contents/MacOS/firefox" "$@"

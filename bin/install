@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+PLUGIN_DIR="$(cd -- "$(dirname "${BASH_SOURCE}")" ; cd .. > /dev/null 2>&1 && pwd -P)"
+
+case "$(uname -s)" in
+  Linux*) PLATFORM=linux; EXT='tar.bz2' ;;
+  Darwin) PLATFORM=mac; EXT='dmg' ;;
+esac
+
+case "$(uname -m)" in
+  aarch64) ARCH=aarch64 ;;
+  arm64) ARCH=aarch64 ;;
+  x86_64) ARCH=x86_64 ;;
+esac
+
+# for debugging platforms:
+# ARCH=x86_64
+# PLATFORM=linux
+# EXT='tar.bz2'
+
+echo "Installing $ASDF_INSTALL_VERSION, directory: $ASDF_INSTALL_PATH, PLATFORM: $PLATFORM EXT: $EXT"
+
+
+case "$PLATFORM" in
+  linux)
+    URL="https://ftp.mozilla.org/pub/firefox/releases/$ASDF_INSTALL_VERSION/$PLATFORM-$ARCH/en-US/firefox-$ASDF_INSTALL_VERSION.$EXT" ;;
+  mac)
+    URL="https://ftp.mozilla.org/pub/firefox/releases/$ASDF_INSTALL_VERSION/$PLATFORM/en-US/Firefox%20$ASDF_INSTALL_VERSION.$EXT" ;;
+esac
+
+cd "$ASDF_INSTALL_PATH"
+
+ARCHIVE="firefox.$EXT"
+
+curl -fsSL -o "$ARCHIVE" -C - "$URL"
+
+echo "Downloaded version $ASDF_INSTALL_VERSION"
+
+case "$PLATFORM" in
+  linux)
+    tar -xjf "$ARCHIVE"
+    if [[ -x "firefox/firefox" ]]; then
+      echo "OK: Firefox binary found"
+    else
+      echo "ERROR: Firefox binary not found"
+      exit 1
+    fi
+    ;;
+  mac)
+    echo "Firefox on MacOS requires a partly manuall install procedure:"
+    echo "* open the dmg file"
+    echo "* drop firefox to the foler where the dmg resides"
+    echo "hit return"
+    open $ASDF_INSTALL_PATH
+    read DONE
+    if [[ -x "$ASDF_INSTALL_PATH/Firefox.app/Contents/MacOS/firefox" ]]; then
+      echo "OK: Firefox.app found"
+      echo "Optional but recommended: locking the application folder prevents firefox from updating itself."
+    else
+      echo "ERROR: Firefox.app not found"
+      exit 1
+    fi
+    ;;
+esac
+
+mkdir bin
+cp "$PLUGIN_DIR/support/firefox_$PLATFORM" bin/firefox
+
+rm "$ARCHIVE"
