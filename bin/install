@@ -49,9 +49,9 @@ case "$PLATFORM" in
     fi
     ;;
   mac)
-    echo "Firefox on MacOS requires a partly manuall install procedure:"
+    echo "Firefox on MacOS requires a partly manual install procedure:"
     echo "* open the dmg file"
-    echo "* drop firefox to the foler where the dmg resides"
+    echo "* drop firefox to the folder where the dmg resides"
     echo "hit return"
     open $ASDF_INSTALL_PATH
     read DONE

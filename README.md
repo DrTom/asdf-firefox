@@ -26,6 +26,16 @@ It is still possible to **install any available version** (not only ESRs) which
 can be found under https://ftp.mozilla.org/pub/firefox/releases/.
 
 
+### Geckodriver
+
+Firefox version 52 and later requires https://github.com/mozilla/geckodriver to
+be driven from external tools. See https://github.com/DrTom/asdf-geckodriver for
+the corresponding asdf plugin.
+
+See https://firefox-source-docs.mozilla.org/testing/geckodriver/Support.html
+for a compatibility list between Geckodriver and Firefox.
+
+
 ## Limits
 
 ### Supported Platforms and Architectures
