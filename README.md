@@ -1,12 +1,13 @@
 # asdf-firefox (ESR)
 
-[Firefox](https://www.mozilla.org/pl/firefox/) plugin for [asdf](https://github.com/asdf-vm/asdf) version manager.
+[Firefox](https://www.mozilla.org/pl/firefox/) plugin for [asdf](https://github.com/asdf-vm/asdf) version manager
+or the [asdf backend of mise](https://mise.jdx.dev/dev-tools/backends/asdf.html).
 
 
 
 ## Context
 
-The goal of this project is primarily to support testing CI infrastructure.
+The goal of this project is primarily to support testing and our CI infrastructure.
 
 
 ## Install
@@ -14,6 +15,12 @@ The goal of this project is primarily to support testing CI infrastructure.
 ```
 asdf plugin-add firefox https://github.com/DrTom/asdf-firefox.git
 
+```
+
+or with mise:
+
+```
+mise plugin install firefox https://github.com/DrTom/asdf-firefox.git
 ```
 
 ## Usage Notes

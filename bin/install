@@ -6,7 +6,7 @@ PLUGIN_DIR="$(cd -- "$(dirname "${BASH_SOURCE}")" ; cd .. > /dev/null 2>&1 && pw
 
 case "$(uname -s)" in
   Linux*) PLATFORM=linux; EXT='tar.bz2' ;;
-  Darwin) PLATFORM=mac; EXT='dmg' ;;
+  Darwin) PLATFORM=mac; EXT='pkg' ;;
 esac
 
 case "$(uname -m)" in
@@ -49,19 +49,21 @@ case "$PLATFORM" in
     fi
     ;;
   mac)
-    echo "Firefox on MacOS requires a partly manual install procedure:"
-    echo "* open the dmg file"
-    echo "* drop firefox to the folder where the dmg resides"
-    echo "hit return"
-    open $ASDF_INSTALL_PATH
-    read DONE
+    echo "Firefox ESR on MacOS" 
+    echo "===================="
+    echo $ASDF_INSTALL_PATH
+    echo "Expanding the pkg file..."
+    pkgutil --expand-full "$ARCHIVE" "$ASDF_INSTALL_PATH/tmp"
+    mv  $ASDF_INSTALL_PATH/tmp/Firefox.tmp1.pkg/Payload/Firefox.app $ASDF_INSTALL_PATH/Firefox.app
     if [[ -x "$ASDF_INSTALL_PATH/Firefox.app/Contents/MacOS/firefox" ]]; then
       echo "OK: Firefox.app found"
-      echo "Optional but recommended: locking the application folder prevents firefox from updating itself."
     else
       echo "ERROR: Firefox.app not found"
       exit 1
     fi
+    chflags -R uchg "$ASDF_INSTALL_PATH/Firefox.app"
+    echo "Firefox.app is now read-only"
+    echo "To uninstall remove the lock protection of ${ASDF_INSTALL_PATH}/Firefox.app."
     ;;
 esac
 
@@ -69,3 +71,4 @@ mkdir bin
 cp "$PLUGIN_DIR/support/firefox_$PLATFORM" bin/firefox
 
 rm "$ARCHIVE"
+rm -rf tmp
