@@ -25,7 +25,13 @@ echo "Installing $ASDF_INSTALL_VERSION, directory: $ASDF_INSTALL_PATH, PLATFORM:
 
 case "$PLATFORM" in
   linux)
-    URL="https://ftp.mozilla.org/pub/firefox/releases/$ASDF_INSTALL_VERSION/$PLATFORM-$ARCH/en-US/firefox-$ASDF_INSTALL_VERSION.$EXT" ;;
+    URL="https://ftp.mozilla.org/pub/firefox/releases/$ASDF_INSTALL_VERSION/$PLATFORM-$ARCH/en-US/firefox-$ASDF_INSTALL_VERSION.$EXT" 
+    if $(curl --output /dev/null --silent --head --fail "$URL"); then
+      echo "URL exists: $URL"
+    else
+      EXT='tar.xz'
+      URL="https://ftp.mozilla.org/pub/firefox/releases/$ASDF_INSTALL_VERSION/$PLATFORM-$ARCH/en-US/firefox-$ASDF_INSTALL_VERSION.$EXT"
+    fi ;;
   mac)
     URL="https://ftp.mozilla.org/pub/firefox/releases/$ASDF_INSTALL_VERSION/$PLATFORM/en-US/Firefox%20$ASDF_INSTALL_VERSION.$EXT" ;;
 esac
@@ -40,7 +46,10 @@ echo "Downloaded version $ASDF_INSTALL_VERSION"
 
 case "$PLATFORM" in
   linux)
-    tar -xjf "$ARCHIVE"
+    case "$EXT" in
+      tar.bz2) tar -xjf "$ARCHIVE" ;;
+      tar.xz) tar -xJf "$ARCHIVE" ;;
+    esac  
     if [[ -x "firefox/firefox" ]]; then
       echo "OK: Firefox binary found"
     else
