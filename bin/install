@@ -63,7 +63,15 @@ case "$PLATFORM" in
     echo $ASDF_INSTALL_PATH
     echo "Expanding the pkg file..."
     pkgutil --expand-full "$ARCHIVE" "$ASDF_INSTALL_PATH/tmp"
-    mv  $ASDF_INSTALL_PATH/tmp/Firefox.tmp1.pkg/Payload/Firefox.app $ASDF_INSTALL_PATH/Firefox.app
+    # the inner package name varies between releases (Firefox.tmp1.pkg,
+    # Firefox.pkg, ...): locate the expanded app instead of hardcoding it
+    APP="$(find "$ASDF_INSTALL_PATH/tmp" -maxdepth 4 -type d -name Firefox.app | head -n 1)"
+    if [[ -z "$APP" ]]; then
+      echo "ERROR: Firefox.app not found in expanded pkg:"; find "$ASDF_INSTALL_PATH/tmp" -maxdepth 3 | head -20
+      exit 1
+    fi
+    mv "$APP" "$ASDF_INSTALL_PATH/Firefox.app"
+    rm -rf "$ASDF_INSTALL_PATH/tmp"
     if [[ -x "$ASDF_INSTALL_PATH/Firefox.app/Contents/MacOS/firefox" ]]; then
       echo "OK: Firefox.app found"
     else
